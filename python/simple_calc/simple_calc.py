@@ -77,6 +77,11 @@ operators = {
 # Functions
 # ------------------------------------------------------------------------
 
+try:
+    input = raw_input
+except NameError:
+    pass
+    
 def get_user_input():
     
     try:
