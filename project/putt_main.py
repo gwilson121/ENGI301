@@ -31,7 +31,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------
 """
-
+# importing necessary libraries
 import time
 import Adafruit_BBIO.GPIO as GPIO
 import os
@@ -40,12 +40,13 @@ import board
 import busio
 import adafruit_character_lcd.character_lcd_i2c as character_lcd
 
-
+# initializing LCD Screen
 i2c = busio.I2C(board.SCL, board.SDA)
 cols = 20
 rows = 4
 lcd = character_lcd.Character_LCD_I2C(i2c, cols, rows)
 
+# setting up GPIO inputs for sensors and butttons
 GPIO.setup("P2_4", GPIO.IN) # sensor 1
 GPIO.setup("P2_6", GPIO.IN) # sensor 2
 GPIO.setup("P2_2", GPIO.IN) # record button
@@ -53,17 +54,26 @@ GPIO.setup("P2_8", GPIO.IN) # history button
 GPIO.setup("P2_10", GPIO.IN) # gpio52 toggle1 button
 GPIO.setup("P2_19", GPIO.IN) # gpio 27 toggle2 button
 
+# initializing time variables for speed calculation
 t_1 = 0.0
 t_2 = 0.0
-d = 17.75
+
+# distance between sensors
+d = 17.75 # cm
+
+# initializing variables for history collection and display
 reading = []
 index = 0
 
+# record function
 def record():
+    # setting up for recording putt speed with "Ready" message and audio
     sensor_1 = False
     lcd.clear()
     lcd.message = ("Ready")
     os.system("aplay /var/lib/cloud9/Ready2.wav")
+    
+    # while loop that detects sensor activation and performs speed calculation
     while True:
         if sensor_1 and (time.time() - t_1 > 2.0):
             print("Reset P2_4")
@@ -79,9 +89,11 @@ def record():
             t        = t_2-t_1
             s        = d/t
             s = round(s, 5)
+            # Appending recorded speeds
             reading.append(s)
-            # s = round(s, 4)
+            # Displaying speeds in real time
             lcd.message = ("speed = {0:3.7}".format(s))
+            # Audio Feedback depending on detected putt speed
             if s < 60:
                 os.system("aplay /var/lib/cloud9/Too_Slow.wav")
             if (s >= 60) and (s <= 80):
@@ -89,6 +101,7 @@ def record():
             if s > 80:
                 os.system("aplay /var/lib/cloud9/Too_Fast.wav")
             time.sleep(0.75)
+            # clearing screen for next putt and re-initializing screen
             lcd.clear()
             lcd.message = ("Ready")
             os.system("aplay /var/lib/cloud9/Ready2.wav")
@@ -97,28 +110,34 @@ def record():
             break
         time.sleep(0.038) # based on sensor timing
 
+# End def
 
+# print_history function
 def print_history(index):
+    # initializing message
     message = ""
-    
+    # printing message
     print("history index = {0}".format(index))
-    
+    # clearing LCD screen
     lcd.clear()
-    
+    # for loop that displays and numbers the appended putts starting at 1
     for i, item in enumerate(reading):
         if (i >= index) and (i < index + 4):
             message = message + "{0}: {1}\n".format(i + 1, item)
             
     lcd.message = message
 
-    
+# End def
+
+# history function    
 def history():
     print("History")
     index = 0
-
+    # calling print history function and play history audio
     print_history(index)
     os.system("aplay /var/lib/cloud9/History.wav")
 
+    # scrolling
     while True:
         if GPIO.input("P2_10") == 0:
             print("P2_10 pressed")
@@ -131,24 +150,17 @@ def history():
             if (index < len(reading) - 1):
                 index = index + 1
                 print_history(index)
-            
+                
+        # breaks out of history display    
         if GPIO.input("P2_2") == 0:
             break;
             
         time.sleep(0.1)
 
-"""
-    if GPIO.input("P2_10") == 1:
-        pass
-    if GPIO.input("P2_19") == 1:
-        pass
-    if GPIO.input("P2_10") == 0:
-         if index > 0:
-            index = index - 1
-    if GPIO.input("P2_19") == 0:
-         if index < len(reading) - 1:
-            index = index + 1
-"""    
+# End def
+
+# main code
+# waits for specific buttons to be pressed to carry out the different functions
 try:
     while True:
         if GPIO.input("P2_2") == 1:
@@ -165,10 +177,11 @@ try:
             print("history")
             history()
         time.sleep(0.1)
-        # speed = float((distance // (t_2 - t_1)) #calculate speed
-        # print("speed = {}".format(speed))
-        
+
+# Keyboard interrupt       
 except KeyboardInterrupt:
     GPIO.cleanup()
     lcd.clear()
     print("Program Complete")
+    
+# End def
