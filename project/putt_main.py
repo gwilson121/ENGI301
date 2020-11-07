@@ -56,7 +56,8 @@ GPIO.setup("P2_19", GPIO.IN) # gpio 27 toggle2 button
 t_1 = 0.0
 t_2 = 0.0
 d = 17.75
-reading = []
+# reading = []
+reading = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
 index = 0
 
 def record():
@@ -101,6 +102,10 @@ def record():
 def print_history(index):
     message = ""
     
+    print("history index = {0}".format(index))
+    
+    lcd.clear()
+    
     for i, item in enumerate(reading):
         if (i >= index) and (i < index + 4):
             message = message + "{0}: {1}\n".format(i + 1, item)
@@ -111,18 +116,26 @@ def print_history(index):
 def history():
     print("History")
     index = 0
+
     print_history(index)
     os.system("aplay /var/lib/cloud9/History.wav")
 
     while True:
-        if GPIO.input("P2_10") == 0 and index > 0:
-            index = index - 1
-            print_history(index)
-        if GPIO.input("P2_19") == 0 and index < len(reading) - 1:
-            index = index + 1
-            print_history(index)
-        if GPIO.input("P2_2"):
+        if GPIO.input("P2_10") == 0:
+            print("P2_10 pressed")
+            if (index > 0):
+                index = index - 1
+                print_history(index)
+            
+        if GPIO.input("P2_19") == 0:
+            print("P2_19 pressed")
+            if (index < len(reading) - 1):
+                index = index + 1
+                print_history(index)
+            
+        if GPIO.input("P2_2") == 0:
             break;
+            
         time.sleep(0.1)
 
 """
