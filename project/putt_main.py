@@ -56,8 +56,7 @@ GPIO.setup("P2_19", GPIO.IN) # gpio 27 toggle2 button
 t_1 = 0.0
 t_2 = 0.0
 d = 17.75
-# reading = []
-reading = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
+reading = []
 index = 0
 
 def record():
