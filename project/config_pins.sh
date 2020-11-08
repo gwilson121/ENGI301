@@ -31,12 +31,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # --------------------------------------------------------------------------
 # 
-# Configure pins for Combination Lock:
+# Configure pins for Putt Project:
 #   - I2C1
 #   - Sensors
-#   - LCD Display
-#   - Button
-#   - Audio Jack
+#   - Buttons
 # 
 # --------------------------------------------------------------------------
 # I2C1
