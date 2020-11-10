@@ -1,4 +1,6 @@
-Putt Project
+# Putt Speed Tracking Device Repository
+
+This repository contains the putt_main.py file, config_pins.sh file, the run script, as well as the project proposal presentation slides.
 
 How to Run: 
 1. Plug Pocketbeagle into 5V power source
