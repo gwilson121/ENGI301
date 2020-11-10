@@ -10,6 +10,6 @@ How to Run:
 7. Press yellow button to return to recording mode
 8. Power down PocketBeagle to turn off device
 
-Detailed Set up/Build/Implementation Instructions can be found at the Hackster Project link below:
+Detailed Set Up/Build/Implementation Instructions can be found at the Hackster Project link below:
 
 Hackster Link: https://www.hackster.io/grace-wilson/putt-speed-tracker-e924e8
